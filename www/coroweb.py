@@ -27,16 +27,16 @@ def get(path):
 	
 def post(path):
 	'''
-    Define decorator @post('/path')
-    '''
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kw):
-            return func(*args, **kw)
-        wrapper.__method__ = 'POST'
-        wrapper.__route__ = path
-        return wrapper
-    return decorator
+	Define decorator @post('/path')
+	'''
+	def decorator(func):
+		@functools.wraps(func)
+		def wrapper(*args, **kw):
+			return func(*args, **kw)
+		wrapper.__method__ = 'POST'
+		wrapper.__route__ = path
+		return wrapper
+	return decorator
 	
 def get_required_kw_args(fn):
 	args=[]
@@ -67,28 +67,28 @@ def has_var_kw_arg(fn):
 			return True
 			
 def has_request_arg(fn):
-    sig = inspect.signature(fn)
-    params = sig.parameters
-    found = False
-    for name, param in params.items():
-        if name == 'request':
-            found = True
-            continue
-        if found and (param.kind != inspect.Parameter.VAR_POSITIONAL and param.kind != inspect.Parameter.KEYWORD_ONLY and param.kind != inspect.Parameter.VAR_KEYWORD):
-            raise ValueError('request parameter must be the last named parameter in function: %s%s' % (fn.__name__, str(sig)))
-    return found
+	sig = inspect.signature(fn)
+	params = sig.parameters
+	found = False
+	for name, param in params.items():
+		if name == 'request':
+			found = True
+			continue
+		if found and (param.kind != inspect.Parameter.VAR_POSITIONAL and param.kind != inspect.Parameter.KEYWORD_ONLY and param.kind != inspect.Parameter.VAR_KEYWORD):
+			raise ValueError('request parameter must be the last named parameter in function: %s%s' % (fn.__name__, str(sig)))
+	return found
 
 #RequestHandler目的就是从URL函数中分析其需要接收的参数，从request中获取必要的参数，调用URL函数，然后把结果转换为web.Response对象，这样，就完全符合aiohttp框架的要求	
 class RequestHandler(object):
 	
 	def __init__(self,app,fn):
 		self._app = app
-        self._func = fn
-        self._has_request_arg = has_request_arg(fn)
-        self._has_var_kw_arg = has_var_kw_arg(fn)
-        self._has_named_kw_args = has_named_kw_args(fn)
-        self._named_kw_args = get_named_kw_args(fn)
-        self._required_kw_args = get_required_kw_args(fn)
+		self._func = fn
+		self._has_request_arg = has_request_arg(fn)
+		self._has_var_kw_arg = has_var_kw_arg(fn)
+		self._has_named_kw_args = has_named_kw_args(fn)
+		self._named_kw_args = get_named_kw_args(fn)
+		self._required_kw_args = get_required_kw_args(fn)
 		
 	async def __call__(self,request):
 		kw=None
@@ -169,7 +169,7 @@ def add_routes(app,module_name):
 			continue
 		fn=getattr(mod,attr)
 		if callable(fn):
-			method=getattr(fn,'__method__'，None)
+			method=getattr(fn,'__method__',None)
 			path=getattr(fn,'__route__',None)
 			if method and path:
 				add_route(app,fn)
