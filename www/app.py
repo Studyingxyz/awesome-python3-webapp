@@ -16,6 +16,8 @@ from datetime import datetime
 from aiohttp import web
 from jinja2 import Environment,FileSystemLoader
 
+from config import configs
+
 import orm 
 from coroweb import add_routes,add_static
 
@@ -39,6 +41,15 @@ def init_jinja2(app,**kw):
 			env.filters[name]=f
 	app['__templating__']=env
 
+#一个middleware可以改变URL的输入、输出，甚至可以决定不继续处理而直接返回。middleware的用处就在于把通用的功能从每个URL处理函数中拿出来，集中放到一个地方。
+	
+async def logger_factory(app,handler):
+	async def logger(request):
+		logging.info('Request:%s %s' % (request.method,request.path))
+		#await asyncio.sleep(0.3)
+		return (await handler(request))
+	return logger
+	
 async def data_factory(app,handler):
 	async def parse_data(request):
 		if request.method=='POST':
@@ -107,6 +118,7 @@ def datetime_filter(t):
 	# return web.Response(body=b'<h1>Awesome</h1>',headers={'content-type':'text/html'})
 
 async def init(loop):
+	#加入middleware、jinja2模板和自注册的支持
 	await orm.create_pool(pool=pool,host='127.0.0.1',port=3306,user='root',password='password',db='awesome')
 	app=web.Application(loop=loop,middlewares=[
 	    logger_factory,response_factory
