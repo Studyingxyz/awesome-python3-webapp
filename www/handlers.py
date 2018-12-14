@@ -1,20 +1,21 @@
-#！usr/bin/env python3
-# -*- coding:utf-8 -*-
 
-__author__='jingbin Zhao'
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-'url handlers'
+__author__ = 'jingbin zhao'
 
-import re,time,json,logging,hashlib,base64,asyncio
+' url handlers '
 
-from coroweb import get,post
+import re, time, json, logging, hashlib, base64, asyncio
 
-from models import User,Comment,Blog,next_id
+from coroweb import get, post
+
+from models import User, Comment, Blog, next_id
 
 @get('/')
 async def index(request):
-	users=await User.findAll()
-	return {
-		'__template__':'test.html',
-		'users':users
-	}
+    users = await User.findAll()
+    return {
+        '__template__': 'test.html',
+        'users': users
+    }
