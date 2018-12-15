@@ -6,7 +6,7 @@
 
 from __future__ import generators
 
-r""A fast and  complete Python implementation of Markdown.
+r"""A fast and  complete Python implementation of Markdown.
 
 [from http://daringfireball.net/projects/markdown/]
 > Markdown is a text-to-HTML filter; it translates an easy-to-read /
@@ -33,7 +33,8 @@ This implementation of Markdown implements the full "core" syntax plus a
 number of extras (e.g., code syntax coloring, footnotes) as described on
 <https://github.com/trentm/python-markdown2/wiki/Extras>.
 """
-cmdln_desc = ""A fast and complete Python implementation of Markdown, a
+
+cmdln_desc = """A fast and complete Python implementation of Markdown, a
 text-to-HTML conversion tool for web writers.
 Supported extra syntax options (see -x|--extras option below and
 see <https://github.com/trentm/python-markdown2/wiki/Extras> for details):
@@ -129,11 +130,11 @@ log=logging.getLogger("markdown")
 DEFAULT_TAB_WIDTH=4
 
 SECRET_SALT=bytes(randint(0,1000000))
-def -hash_text(s):
+def _hash_text(s):
 	return 'md5-' + md5(SECRET_SALT+s.encode("utf-8")).hexdigest()
 	
 #Table of hash values for escaped characters:
-g_escape_table=dict([(ch,-hash_text(ch))
+g_escape_table=dict([(ch,_hash_text(ch))
 	for ch in '\\`*{}[]()>#+-.!'])
 	
 	
@@ -342,12 +343,12 @@ class Markdown(object):
 			rv.metadata=self.metadata
 		return rv
 		
-	dev postprocess(self,text):
+	def postprocess(self,text):
 		"""A hook for subclasses to do some postprocessing of the html, if
         desired. This is called before unescaping of special chars and
         unhashing of raw HTML spans.
         """
-        return text
+		return text
 		
 	def preprocess(self,text):
 		"""A hook for subclasses to do some preprocessing of the Markdown, if
@@ -525,8 +526,8 @@ class Markdown(object):
     # _block_tags_b.  This way html5 tags are easy to keep track of.
 	_html5tags = '|article|aside|header|hgroup|footer|nav|section|figure|figcaption'
 
-    _block_tags_a = 'p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math|ins|del'
-    _block_tags_a += _html5tags
+	_block_tags_a = 'p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math|ins|del'
+	_block_tags_a += _html5tags
 	
 	_strict_tag_block_re=re.compile(r"""
         (                       # save in \1
@@ -542,9 +543,9 @@ class Markdown(object):
         re.X | re.M)
 	
 	_block_tags_b = 'p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math'
-    _block_tags_b += _html5tags
+	_block_tags_b += _html5tags
 
-    _liberal_tag_block_re = re.compile(r"""
+	_liberal_tag_block_re = re.compile(r"""
         (                       # save in \1
             ^                   # start of line  (with re.M)
             <(%s)               # start tag = \2
@@ -579,7 +580,7 @@ class Markdown(object):
 				    "\n\n",middle,"\n\n",
 					l_key,"\n\n"])
 		key=_hash_text(html)
-     	self.html_blocks[key]=html
+		self.html_blocks[key]=html
 		return "\n\n"+key+"\n\n"
 		
 	def _hash_html_blocks(self,text,raw=False):
@@ -672,7 +673,7 @@ class Markdown(object):
 					html=self._sanitize_html(html)
 				key=_hash_text(html)
 				self.html_blocks[keys]=html
-				text=text[:start_idx]+ "\n\n" +key "\n\n" + text[end_idx:]
+				text=text[:start_idx]+ "\n\n" +key+"\n\n" + text[end_idx:]
 		if "xml" in self.extras:
 			# Treat XML processing instructions and namespaced one-liner
             # tags as if they were block HTML tags. E.g., if standalone
@@ -740,7 +741,7 @@ class Markdown(object):
         - The first paragraph may start on the next line, like so:
             [^note-id]:
                 Text of the note.
-        """\
+        """
 		less_than_tab=self.tab_width-1
 		footnote_def_re=re.compile(r'''
             ^[ ]{0,%d}\[\^(.+)\]:   # id = \1
@@ -759,7 +760,8 @@ class Markdown(object):
             re.X | re.M)
 		return footnote_def_re.sub(self._extract_footnote_def_sub,text)
 		
-	_hr_re=re.compile(r'^[]{0,3}([-_*][]{0,2}){3,}$',re.M)
+	#_hr_re=re.compile(r'^[]{0,3}([-_*][]{0,2}){3,}$',re.M)
+	_hr_re = re.compile(r'^[ ]{0,3}([-_*][ ]{0,2}){3,}$', re.M)
 	
 	def _run_block_gamut(self,text):
 		# These are all the transformations that form block-level
@@ -808,7 +810,7 @@ class Markdown(object):
 		s = ('\n' # separate from possible cuddled paragraph
              + indent + ('\n'+indent).join(lines)
              + '\n\n')
-        return s
+		return s
 		
 	def _prepare_pyshell_blocks(self,text):
 		"""Ensure that Python interactive shell sessions are put in
@@ -871,8 +873,8 @@ class Markdown(object):
 		"""Copying PHP-Markdown and GFM table syntax. Some regex borrowed from
         https://github.com/michelf/php-markdown/blob/lib/Michelf/Markdown.php#L2538
         """
-        less_than_tab = self.tab_width - 1
-        table_re = re.compile(r'''
+		less_than_tab = self.tab_width - 1
+		table_re = re.compile(r'''
                 (?:(?<=\n\n)|\A\n?)             # leading blank line
                 ^[ ]{0,%d}                      # allowed whitespace
                 (.*[|].*)  \n                   # $1: header row (at least one pipe)
@@ -925,9 +927,9 @@ class Markdown(object):
             ^([ ]{0,%d})\|\|.+?\|\|[ ]*\n  # first line
             (^\1\|\|.+?\|\|\n)*        # any number of subsequent lines
             ''' % less_than_tab, re.M | re.X)
-        return wiki_table_re.sub(self._wiki_table_sub, text)
+		return wiki_table_re.sub(self._wiki_table_sub, text)
 
-    def _run_span_gamut(self, text):
+	def _run_span_gamut(self, text):
         # These are all the transformations that occur *within* block-level
         # tags like paragraphs, headers, and list items.
 		
@@ -962,7 +964,7 @@ class Markdown(object):
 		return text
 		
 	# "Sorta" because auto-links are identified as "tag" tokens.
-    _sorta_html_tokenize_re = re.compile(r"""
+	_sorta_html_tokenize_re = re.compile(r"""
         (
             # tag
             </?
@@ -979,7 +981,7 @@ class Markdown(object):
         )
         """, re.X)
 
-    def _escape_special_chars(self, text):
+	def _escape_special_chars(self, text):
         # Python markdown note: the HTML tokenization here differs from
         # that in Markdown.pl, hence the behaviour for subtle cases can
         # differ (I believe the tokenizer here does a better job because
@@ -1000,7 +1002,7 @@ class Markdown(object):
 						            .replace('_',self._escape_table['_']))
 			else:
 				escaped.append(self._encode_backslash_escapes(token))
-			is_html_markup=not in is_html_markup
+			is_html_markup=not is_html_markup
 		return ''.join(escaped)
 		
 	def _hash_html_spans(self,text):
@@ -1056,7 +1058,7 @@ class Markdown(object):
             )?                  # title is optional
           \)$
         ''', re.X | re.S)
-    _tail_of_reference_link_re = re.compile(r'''
+	_tail_of_reference_link_re = re.compile(r'''
           # Match tail of: [text][id]
           [ ]?          # one optional space
           (?:\n[ ]*)?   # one optional newline followed by spaces
@@ -1112,14 +1114,14 @@ class Markdown(object):
 		return url,title,end_idx
 		
 	def _do_links(self,text):
-        """Turn Markdown link shortcuts into XHTML <a> and <img> tags.
+		"""Turn Markdown link shortcuts into XHTML <a> and <img> tags.
         This is a combination of Markdown.pl's _DoAnchors() and
         _DoImages(). They are done together because that simplified the
         approach. It was necessary to use a different approach than
         Markdown.pl because of the lack of atomic matching support in
         Python's regex engine used in $g_nested_brackets.
         """
-        MAX_LINK_TEXT_SENTINEL = 3000  # markdown2 issue 24
+		MAX_LINK_TEXT_SENTINEL = 3000  # markdown2 issue 24
 
         # `anchor_allowed_pos` is used to support img links inside
         # anchors, but not anchors inside anchors. An anchor's start
@@ -1252,7 +1254,7 @@ class Markdown(object):
 						# We've got to encode these to avoid conflicting
                         # with italics/bold.
 						url=url.replace('*',self._escape_table['*']) \
-						        replace('_',self._escape_table['_'])
+						        .replace('_',self._escape_table['_'])
 						title=self.titles.get(link_id)
 						if title:
 							before=title
@@ -1299,7 +1301,7 @@ class Markdown(object):
 		return text
 		
 	def header_id_from_text(self,text,prefix,n):
-        """Generate a header id attribute value from the given header
+		"""Generate a header id attribute value from the given header
         HTML content.
         This is only called if the "header-ids" extra is enabled.
         Subclasses may override this for different header ids.
@@ -1642,7 +1644,7 @@ class Markdown(object):
     #   space and that space will be removed in the emitted HTML
     # See `test/tm-cases/escapes.text` for a number of edge-case
     # examples.
-    _code_span_re = re.compile(r'''
+	_code_span_re = re.compile(r'''
             (?<!\\)
             (`+)        # \1 = Opening run of `
             (?!`)       # See Note A test/tm-cases/escapes.text
@@ -1687,7 +1689,7 @@ class Markdown(object):
         The point is that in code, these characters are literals,
         and lose their special Markdown meanings.
         """
-        replacements = [
+		replacements = [
             # Encode all ampersands; HTML entities are not
             # entities within a Markdown code span.
             ('&', '&amp;'),
@@ -1722,21 +1724,21 @@ class Markdown(object):
 	_apostrophe_year_re=re.compile(r"'(\d\d)(?=(\s|,|;|\.|\?|!|$))")
 	_contractions = ["tis", "twas", "twer", "neath", "o", "n",
         "round", "bout", "twixt", "nuff", "fraid", "sup"]
-    def _do_smart_contractions(self, text):
-        text = self._apostrophe_year_re.sub(r"&#8217;\1", text)
-        for c in self._contractions:
-            text = text.replace("'%s" % c, "&#8217;%s" % c)
-            text = text.replace("'%s" % c.capitalize(),
+	def _do_smart_contractions(self, text):
+		text = self._apostrophe_year_re.sub(r"&#8217;\1", text)
+		for c in self._contractions:
+			text = text.replace("'%s" % c, "&#8217;%s" % c)
+		text = text.replace("'%s" % c.capitalize(),
                 "&#8217;%s" % c.capitalize())
-        return text
+		return text
 
     # Substitute double-quotes before single-quotes.
-    _opening_single_quote_re = re.compile(r"(?<!\S)'(?=\S)")
-    _opening_double_quote_re = re.compile(r'(?<!\S)"(?=\S)')
-    _closing_single_quote_re = re.compile(r"(?<=\S)'")
-    _closing_double_quote_re = re.compile(r'(?<=\S)"(?=(\s|,|;|\.|\?|!|$))')
-    def _do_smart_punctuation(self, text):
-        """Fancifies 'single quotes', "double quotes", and apostrophes.
+	_opening_single_quote_re = re.compile(r"(?<!\S)'(?=\S)")
+	_opening_double_quote_re = re.compile(r'(?<!\S)"(?=\S)')
+	_closing_single_quote_re = re.compile(r"(?<=\S)'")
+	_closing_double_quote_re = re.compile(r'(?<=\S)"(?=(\s|,|;|\.|\?|!|$))')
+	def _do_smart_punctuation(self, text):
+		"""Fancifies 'single quotes', "double quotes", and apostrophes.
         Converts --, ---, and ... into en dashes, em dashes, and ellipses.
         Inspiration is: <http://daringfireball.net/projects/smartypants/>
         See "test/tm-cases/smarty_pants.text" for a full discussion of the
@@ -1754,11 +1756,11 @@ class Markdown(object):
 			text=self._closing_double_quote_re.sub("&#8221;",text)
 			
 		text = text.replace("---", "&#8212;")
-        text = text.replace("--", "&#8211;")
-        text = text.replace("...", "&#8230;")
-        text = text.replace(" . . . ", "&#8230;")
-        text = text.replace(". . .", "&#8230;")
-        return text
+		text = text.replace("--", "&#8211;")
+		text = text.replace("...", "&#8230;")
+		text = text.replace(" . . . ", "&#8230;")
+		text = text.replace(". . .", "&#8230;")
+		return text
 		
 	_block_quote_re = re.compile(r'''
         (                           # Wrap whole match in \1
@@ -1770,7 +1772,7 @@ class Markdown(object):
           )+
         )
         ''', re.M | re.X)
-    _bq_one_level_re = re.compile('^[ \t]*>[ \t]?', re.M);
+	_bq_one_level_re = re.compile('^[ \t]*>[ \t]?', re.M);
 	
 	_html_pre_block_re=re.compile(r'(\s*<pre>.+?</pre>)',re.S)
 	def _dedent_two_spaces_sub(self,match):
@@ -1808,7 +1810,7 @@ class Markdown(object):
 				if "cuddled-lists" in self.extras:
                     # Need to put back trailing '\n' for `_list_item_re`
                     # match at the end of the paragraph.
-                    li = self._list_item_re.search(graf + '\n')
+					li = self._list_item_re.search(graf + '\n')
                     # Two of the same list marker in this paragraph: a likely
                     # candidate for a list cuddled to preceding paragraph
                     # text (issue 33). Note the `[-1]` is a quick way to
@@ -1855,7 +1857,7 @@ class Markdown(object):
 			footer.append('</ol>')
 			footer.append('</div>')
 			return text+'\n\n'+'\n'.join(footer)
-		else：
+		else:
 			return text
 			
 	# Ampersand-encoding based entirely on Nat Irons's Amputator MT plugin:
@@ -1879,7 +1881,7 @@ class Markdown(object):
 		return text
 		
 	def _encode_backslash_escapes(self,text):
-		for ch,escape in list(self._escape_table.items())：
+		for ch,escape in list(self._escape_table.items()):
 			text=text.replace("\\"+ch,escape)
 		return text
 		
@@ -1928,7 +1930,7 @@ class Markdown(object):
 		return addr
 		
 	def _do_link_patterns(self,text):
-        """Caveat emptor: there isn't much guarding against link
+		"""Caveat emptor: there isn't much guarding against link
         patterns being formed inside other standard Markdown links, e.g.
         inside a [link def][like this].
         Dev Notes: *Could* consider prefixing regexes with a negative
@@ -2005,26 +2007,26 @@ class UnicodeWithAttrs(unicode):
 		lines=[]
 		h_stack=[0] #Stack of header-level numbers
 		for level, id, name in self._toc:
-            if level > h_stack[-1]:
-                lines.append("%s<ul>" % indent())
-                h_stack.append(level)
-            elif level == h_stack[-1]:
-                lines[-1] += "</li>"
-            else:
-                while level < h_stack[-1]:
-                    h_stack.pop()
-                    if not lines[-1].endswith("</li>"):
-                        lines[-1] += "</li>"
-                    lines.append("%s</ul></li>" % indent())
-            lines.append('%s<li><a href="#%s">%s</a>' % (
-                indent(), id, name))
-        while len(h_stack) > 1:
-            h_stack.pop()
-            if not lines[-1].endswith("</li>"):
-                lines[-1] += "</li>"
-            lines.append("%s</ul>" % indent())
-        return '\n'.join(lines) + '\n'
-    toc_html = property(toc_html)
+			if level > h_stack[-1]:
+				lines.append("%s<ul>" % indent())
+				h_stack.append(level)
+			elif level == h_stack[-1]:
+				lines[-1] += "</li>"
+			else:
+				while level < h_stack[-1]:
+					h_stack.pop()
+					if not lines[-1].endswith("</li>"):
+						lines[-1] += "</li>"
+					lines.append("%s</ul></li>" % indent())
+			lines.append('%s<li><a href="#%s">%s</a>' % (
+				indent(), id, name))
+		while len(h_stack) > 1:
+			h_stack.pop()
+			if not lines[-1].endswith("</li>"):
+				lines[-1] += "</li>"
+			lines.append("%s</ul>" % indent())
+		return '\n'.join(lines) + '\n'
+	toc_html = property(toc_html)
 
 ## {{{ http://code.activestate.com/recipes/577257/ (r1)
 _slugify_strip_re = re.compile(r'[^\w\s-]')
@@ -2150,7 +2152,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
     return lines
 
 def _dedent(text, tabsize=8, skip_first_line=False):
-    """_dedent(text, tabsize=8, skip_first_line=False) -> dedented text
+	"""_dedent(text, tabsize=8, skip_first_line=False) -> dedented text
         "text" is the text to dedent.
         "tabsize" is the tab width to use for indent width calculations.
         "skip_first_line" is a boolean indicating if the first line should
@@ -2158,6 +2160,7 @@ def _dedent(text, tabsize=8, skip_first_line=False):
             This is sometimes useful for docstrings and similar.
     textwrap.dedent(s), but don't expand tabs to spaces
     """
+
 	lines=text.splitlines(1)
 	_dedentlines(lines,tabsize=tabsize,skip_first_line=skip_first_line)
 	return ''.join(lines)
@@ -2169,10 +2172,10 @@ class _memoized(object):
     not re-evaluated.
     http://wiki.python.org/moin/PythonDecoratorLibrary
     """
-    def __init__(self,func):
+	def __init__(self,func):
 		self.funx=func
 		self.cache={}
-	def __call__(self,^args):
+	def __call__(self,*args):
 		try:
 			return self.cache[args]
 		except KeyError:
@@ -2232,7 +2235,7 @@ def _xml_escape_attr(attr,skip_single_quote=True):
     By default this doesn't bother with escaping `'` to `&#39;`, presuming that
     the tag attribute is surrounded by double quotes.
     """
-    escaped = (attr
+	escaped = (attr
         .replace('&', '&amp;')
         .replace('"', '&quot;')
         .replace('<', '&lt;')
@@ -2284,29 +2287,30 @@ def main(argv=None):
 					  help="more verbose output")
 	parser.add_option("--encoding",
                       help="specify encoding of text content")
-    parser.add_option("--html4tags", action="store_true", default=False,
+	parser.add_option("--html4tags", action="store_true", default=False,
                       help="use HTML 4 style for empty element tags")
-    parser.add_option("-s", "--safe", metavar="MODE", dest="safe_mode",
+	parser.add_option("-s", "--safe", metavar="MODE", dest="safe_mode",
                       help="sanitize literal HTML: 'escape' escapes "
                            "HTML meta chars, 'replace' replaces with an "
                            "[HTML_REMOVED] note")
-    parser.add_option("-x", "--extras", action="append",
+	parser.add_option("-x", "--extras", action="append",
                       help="Turn on specific extra features (not part of "
                            "the core Markdown spec). See above.")
-    parser.add_option("--use-file-vars",
+	parser.add_option("--use-file-vars",
                       help="Look for and use Emacs-style 'markdown-extras' "
                            "file var to turn on extras. See "
                            "<https://github.com/trentm/python-markdown2/wiki/Extras>")
-    parser.add_option("--link-patterns-file",
+	parser.add_option("--link-patterns-file",
                       help="path to a link pattern file")
-    parser.add_option("--self-test", action="store_true",
+	parser.add_option("--self-test", action="store_true",
                       help="run internal self-tests (some doctests)")
-    parser.add_option("--compare", action="store_true",
+	parser.add_option("--compare", action="store_true",
                       help="run against Markdown.pl as well (for testing)")
-    parser.set_defaults(log_level=logging.INFO, compare=False,
+	parser.set_defaults(log_level=logging.INFO, compare=False,
                         encoding="utf-8", safe_mode=None, use_file_vars=False)
-    opts, paths = parser.parse_args()
+	opts, paths = parser.parse_args()
 	log.setLevel(opts.log_level)
+
 	
 	if opts.self_test:
 		return _test()
@@ -2324,7 +2328,7 @@ def main(argv=None):
 						pass
 				else:
 					ename,earg=e,None
-				extras{ename}=earg
+				extras[ename]=earg
 	else:
 		extras=None
 	
