@@ -23,6 +23,7 @@ class Dict(dict):
         # 以参数中元素数量最少的集合长度为返回列表长度
 		for k,v in zip(names,values):
 			self[k]=v
+	
 	def __getattr__(self,key):
 		try:
 			return self[key]

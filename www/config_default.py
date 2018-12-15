@@ -6,7 +6,7 @@ __author__='jingbin Zhao'
 Default configurations.
 '''
 
-configs={
+configs = {
 	'debug':True,
 	'db':{
 		'host':'127.0.0.1',
@@ -19,3 +19,4 @@ configs={
 		'secret':'Awesome'
 	}
 }
+
