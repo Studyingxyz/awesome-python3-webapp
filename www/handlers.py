@@ -69,19 +69,21 @@ async def index(request):
 	]
 	return {
 		'__template__':'blogs.html',
-		'blogs':blogs}
+		'blogs':blogs
+	}
 
 @get('/register')
 def register():
 	return{
 		'__template__':'register.html'
 	}
+
 @get('/signin')
 def signin():
 	return {
 		'__template__':'signin.html'
 	}
-	
+
 @post('/api/authenticate')
 async def authenticate(*,email,passwd):
 	if not email:
@@ -102,7 +104,7 @@ async def authenticate(*,email,passwd):
 	#authenticate ok,set cookie:
 	r=web.Response()
 	r.set_cookie(COOKIE_NAME,user2cookie(user,86400),max_age=86400,httponly=True)
-	user,passwd='******'
+	user.passwd='******'
 	r.content_type='application/json'
 	r.body=json.dumps(user,ensure_ascii=False).encode('utf-8')
 	return r
@@ -117,7 +119,8 @@ def signout(request):
 
 _RE_EMAIL = re.compile(r'^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$')
 _RE_SHA1 = re.compile(r'^[0-9a-f]{40}$')
-	
+
+
 @post('/api/users')
 async def api_register_users(*,email,name,passwd):
 	if not name or not name.strip():
